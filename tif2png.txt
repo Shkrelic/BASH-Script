@@ -1,0 +1,41 @@
+#!/bin/bash
+chmod u+x ./downloads.sh
+if chmod u+x ./downloads.sh ; then
+	printf "\nSucceeded making ./downloads.sh executable!"
+else
+	printf "\nFailed making ./downloads.sh executable!"
+fi
+chmod u+x ./gtranslate.sh
+if chmod u+x ./gtranslate.sh ; then
+	printf "\nSucceeded making ./gtranslate.sh executable!"
+else
+	printf "\nFailed making ./gtranslate.sh executable!"
+fi
+chmod u+x ./gwarp.sh
+if chmod u+x ./gwarp.sh ; then
+	printf "\nSucceeded making ./gwarp executable!\n\n"
+else
+	printf "\nFailed making ./gwarp.sh executable!\n\n"
+fi
+
+
+./downloads.sh
+sleep 2s
+printf "\n\n\nRunning gdal_rasterize\n=======================\n\n"
+gdal_rasterize -burn 100 -tr 100 100 -l lakes ncshape/lakes.shp lakes.tif
+printf "Done."
+sleep 2s
+for f in *.tif
+do
+	printf "\n\n\n\n\nConverting $f to .png\n\n"
+	./gtranslate.sh "$f" "$(basename "$f" .tif).png" ||true;
+done
+sleep 2s
+printf "\n\n\n\n\n Running gdalwarp\n====================\n\n"
+./gwarp.sh
+for f in *.tif
+do
+	printf "\n\n\n\nConverting $f\n\n"
+	./gtranslate.sh "$f" "$(basename "$f" .tif).png"||true;
+done
+convert -coalesce -delay 1/1 -resize 500x srtm_*.png srtm.gif

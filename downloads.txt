@@ -1,0 +1,28 @@
+#!/bin/bash
+
+while true
+do
+	read -r -p "Do you wish to download o35078g6_NC.tif, nc_rast, and nc_shape files? (Y/N)" input
+
+case $input in
+	[yY][eE][sS]|[yY])
+echo "Yes"
+	wget https://www.grassbook.org/wp-content/uploads/data_extra/o35078g6_NC.tif.gz
+	sleep 3s
+	gunzip o35078g6_NC.tif.gz;
+	wget http://grass.osgeo.org/sampledata/north_carolina/nc_rast_geotiff.tar.gz
+	wget http://grass.osgeo.org/sampledata/north_carolina/nc_shape.tar.gz
+	sleep 3s
+	tar xvf ./nc_rast_geotiff.tar.gz
+	tar xvf ./nc_shape.tar.gz
+	break
+	;;
+	[nN][oO]|[nN])
+echo "No"
+	break
+	;;
+	*)
+echo "Invalid input..."
+;;
+esac
+done
